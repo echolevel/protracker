@@ -61,42 +61,68 @@ int8_t volumeToScopeVolume(uint8_t vol)
     return (0 - vol);
 }
 
-void changePathToHome(void)
-{
 #ifndef _WIN32
-    sprintf(editor.tempPath, "%s", getenv("HOME"));
-    chdir(editor.tempPath);
-#endif
+int8_t changePathToHome(void)
+{
+    char *homePath;
+
+    homePath = getenv("HOME");
+    if ((homePath != NULL) && (chdir(homePath) == 0))
+        return (true);
+
+    return (false);
 }
 
 // this should ONLY be called AFTER initializeVars()
-void changePathToExecutablePath(void)
+int8_t changePathToProgramPath(void)
 {
-#ifndef _WIN32
-    uint32_t i, pathLen;
+    char *tmpPath;
+    int32_t i, pathLen;
     Dl_info info;
 
-    dladdr((void *)(&changePathToExecutablePath), &info);
-    memset(editor.tempPath, 0, PATH_MAX_LEN + 1);
-    realpath(info.dli_fname, editor.tempPath);
+    tmpPath = (char *)(calloc(PATH_MAX_LEN + 1, 1));
+    if (tmpPath == NULL)
+        return (false);
+
+    if ((dladdr((void *)(&changePathToProgramPath), &info) == 0) || (realpath(info.dli_fname, tmpPath) == NULL))
+    {
+        free(tmpPath);
+        return (false);
+    }
 
     // truncate file name
-    pathLen = strlen(editor.tempPath);
-    for (i = pathLen; i != 0; --i)
+    pathLen = strlen(tmpPath);
+    if (pathLen == 0)
     {
-        if (editor.tempPath[i] == '/')
+        free(tmpPath);
+        return (false);
+    }
+
+    for (i = pathLen - 1; i >= 0; --i)
+    {
+        if (tmpPath[i] == '/')
         {
-            editor.tempPath[i] = '\0';
+            tmpPath[i] = '\0';
             break;
         }
     }
 
-    chdir(editor.tempPath);
-    #ifdef __APPLE__
-        chdir("../../../"); // package.app/Contents/MacOS
-    #endif
+    if (chdir(tmpPath) != 0)
+    {
+        free(tmpPath);
+        return (false);
+    }
+
+    free(tmpPath);
+
+#ifdef __APPLE__
+    if (chdir("../../../") != 0) // package.app/Contents/MacOS
+        return (false);
 #endif
+
+    return (true);
 }
+#endif
 
 int8_t sampleNameIsEmpty(char *name)
 {

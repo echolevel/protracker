@@ -15,6 +15,31 @@
 #include "pt_config.h"
 #include "pt_textout.h"
 
+FILE *loadPTDotConfig(void)
+{
+    uint8_t i;
+    char tmpFilename[16];
+    FILE *f;
+
+    f = fopen("PT.Config", "rb"); // PT didn't read PT.Config with no number, but let's support it
+    if (f == NULL)
+    {
+        for (i = 0; i < 99; ++i)
+        {
+            sprintf(tmpFilename, "PT.Config-%02d", i);
+
+            f = fopen(tmpFilename, "rb");
+            if (f != NULL)
+                break;
+        }
+
+        if (i == 99)
+            return (NULL);
+    }
+
+    return (f);
+}
+
 int8_t loadConfig(void)
 {
     char cfgString[19], *configBuffer;
@@ -23,9 +48,6 @@ int8_t loadConfig(void)
     int32_t lineLen;
     uint32_t configFileSize, i;
     FILE *configFile;
-
-    iniConfigFound = true;
-    ptConfigFound  = true;
 
     // set standard config values first
     ptConfig.pattDots          = false;
@@ -44,24 +66,32 @@ int8_t loadConfig(void)
 
     memset(ptConfig.defaultDiskOpDir, 0, PATH_MAX_LEN + 1);
 
+    iniConfigFound = false;
+
 #ifndef _WIN32
     // first check for $HOME/.protracker
-    sprintf(editor.tempPath, "%s/.protracker", getenv("HOME"));
-    chdir(editor.tempPath);
-
-    configFile = fopen("protracker.ini", "r");
-    if (configFile == NULL)
+    if ((changePathToHome() == true) && (chdir(".protracker") == 0))
     {
-        changePathToExecutablePath();
-
         configFile = fopen("protracker.ini", "r");
-        if (configFile == NULL)
-            iniConfigFound = false;
+        if (configFile != NULL)
+        {
+            iniConfigFound = true;
+        }
+        else
+        {
+            // check in the program directory
+            if (changePathToProgramPath())
+            {
+                configFile = fopen("protracker.ini", "r");
+                if (configFile != NULL)
+                    iniConfigFound = true;
+            }
+        }
     }
 #else
     configFile = fopen("protracker.ini", "r");
-    if (configFile == NULL)
-        iniConfigFound = false;
+    if (configFile != NULL)
+        iniConfigFound = true;
 #endif
 
     if (iniConfigFound)
@@ -239,26 +269,32 @@ int8_t loadConfig(void)
     editor.transDelFlag        = ptConfig.transDel;
     editor.oldTempo            = editor.initialTempo;
 
+    // Load PT.Config (if available)
+    ptConfigFound = false;
+
 #ifndef _WIN32
-    changePathToExecutablePath();
-#endif
-
-    // Load PT.Config if exists...
-    configFile = fopen("PT.Config", "rb"); // PT didn't read PT.Config with no number, but let's support it
-    if (configFile == NULL)
+    if ((changePathToHome() == true) && (chdir(".protracker") == 0))
     {
-        for (i = 0; i < 99; ++i)
+        configFile = loadPTDotConfig();
+        if (configFile != NULL)
         {
-            sprintf(cfgString, "PT.Config-%02d", i);
-
-            configFile = fopen(cfgString, "rb");
-            if (configFile != NULL)
-                break;
+            ptConfigFound = true;
         }
-
-        if (i == 99)
-            ptConfigFound = false;
+        else
+        {
+            if (changePathToProgramPath())
+            {
+                configFile = loadPTDotConfig();
+                if (configFile != NULL)
+                    iniConfigFound = true;
+            }
+        }
     }
+#else
+    configFile = loadPTDotConfig();
+    if (configFile != NULL)
+        ptConfigFound = true;
+#endif
 
     // change path to home for UNIX/BSD systems
 #ifndef _WIN32
