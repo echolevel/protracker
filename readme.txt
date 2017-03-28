@@ -1,4 +1,4 @@
-ProTracker v2.3D clone by Olav "8bitbubsy" Sørensen
+ProTracker v2.3D clone by Olav "8bitbubsy" Sorensen
 
 License:
 ---------------------------------------------------------------------
