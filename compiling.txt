@@ -1,0 +1,46 @@
+Compiled binaries are always available at http://www.16-bits.org/
+
+== COMPILING PROTRACKER ON WINDOWS VISTA OR NEWER ==
+ 1. Use an SVN client to download the code, using this as input:
+    svn://svn.code.sf.net/p/protracker/code/trunk pt-clone-code
+ 2. You need Visual Studio 2015 or newer ('Community' version is free)
+ 3. Wait patiently while you install it. VS2017: install the Desktop pkg.
+ 4. Download and copy over the SDL2 development files from libsdl.org.
+ 5. Open pt-clone.sln found in pt-clone-code\vs2015_project
+    (will be converted if using a newer Visual Studio)
+ 6. Make sure it's in 'release mode' and press F7 to compile the program
+ 7. Done! The binary ('protracker.exe') is now in pt-clone-code\release\
+  
+== COMPILING PROTRACKER ON MAC OS X 10.6 OR NEWER ==
+ 1. Install XCode. It's in the "Optional Installs" folder in your
+     OS X Install DVD that came with your mac.
+    If you don't have the disk, download the latest XCode
+     (+ Command Line Tools package) from
+     https://developer.apple.com/xcode/downloads/
+ 2. Download the SDL2 Runtime Libraries for Mac OS X here:
+    Intel OS X 10.6 and up: https://www.libsdl.org/release/SDL2-2.0.5.dmg
+ 3. Inside the downloaded image you'll find SDL2.framework, copy that folder
+     to /Library/Frameworks
+ 4. Open the Terminal (Applications/Utilities/Terminal) and run the following:
+     svn checkout svn://svn.code.sf.net/p/protracker/code/trunk pt-clone-code
+     cd pt-clone-code
+     chmod +x make-os-x.sh
+     ./make-os-x.sh
+ 5. Done! The binary ('protracker-osx.app') is now in pt-clone-code/release/
+ 6. The correct config file location is '~/.protracker/protracker.ini'.
+ 
+== COMPILING PROTRACKER ON LINUX ==
+ 1. Make sure you have 'build-essentials' and 'subversion' installed (if needed)
+ 2. Install 'libsdl2-dev'
+ 3. Open a terminal and run the following:
+     svn checkout svn://svn.code.sf.net/p/protracker/code/trunk pt-clone-code
+     cd pt-clone-code
+     chmod +x make-linux.sh (make-freebsd.sh for FreeBSD)
+     ./make-linux.sh        (make-freebsd.sh for FreeBSD)
+ 4. Done! The binary ('protracker') is now in pt-clone-code/release/
+    To run it, try double-clicking, or type ./protracker   
+ 5. To get ALT+F4 (copy pattern) and ALT+F5 (paste pattern) working,
+    you have to change these keyboard shortcuts in your OS to something else.
+    The correct config file location is '~/.protracker/protracker.ini'.
+         
+EOF
