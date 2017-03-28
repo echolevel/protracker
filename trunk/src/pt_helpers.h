@@ -54,8 +54,10 @@ void showErrorMsgBox(const char *fmt, ...);
 
 void periodToScopeDelta(moduleChannel_t *ch, uint16_t period);
 int8_t volumeToScopeVolume(uint8_t vol);
-void changePathToExecutablePath(void);
-void changePathToHome(void);
+#ifndef _WIN32
+int8_t changePathToHome(void);
+int8_t changePathToProgramPath(void);
+#endif
 int8_t sampleNameIsEmpty(char *name);
 int8_t moduleNameIsEmpty(char *name);
 void updateWindowTitle(int8_t modified);
