@@ -51,8 +51,8 @@
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>$(VCInstallDir)lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(VCInstallDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>../../vs_sdl_include/lib;$(VCInstallDir)lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>../../vs_sdl_include/include;$(VCInstallDir)include;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
