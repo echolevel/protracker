@@ -43,8 +43,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>$(VCInstallDir)lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(VCInstallDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>../../vs_sdl_include/lib;$(VCInstallDir)lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>../../vs_sdl_include/include;$(VCInstallDir)include;$(IncludePath)</IncludePath>
     <TargetName>protracker</TargetName>
     <OutDir>..\..\release\</OutDir>
     <LinkIncremental>false</LinkIncremental>

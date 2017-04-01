@@ -1278,7 +1278,6 @@ void boostSample(int8_t sample, int8_t ignoreMark)
 
         smp = tmp16_1 / 4.0;
         smp = ROUND_SMP_D(smp);
-
         tmp16_2 += (int16_t)(CLAMP(smp, -128.0, 127.0));
 
         smpDat[i] = (int8_t)(CLAMP(tmp16_2, -128, 127));
@@ -2620,7 +2619,8 @@ void exitFromSam(void)
     editor.ui.updateCurrPattText = true;
     editor.ui.updatePatternData  = true;
 
-    editor.markStartOfs = -1;
+    editor.markStartOfs = 0;
+    editor.markEndOfs   = 0;
 }
 
 void samplerScreen(void)
@@ -2633,14 +2633,13 @@ void samplerScreen(void)
 
     editor.ui.samplerScreenShown = true;
     memcpy(&pixelBuffer[(121 * SCREEN_W)], samplerScreenBMP, 320 * 134 * sizeof (int32_t));
+    hideSprite(SPRITE_PATTERN_CURSOR);
 
     editor.ui.updateStatusText   = true;
     editor.ui.updateSongSize     = true;
     editor.ui.updateSongTiming   = true;
     editor.ui.updateResampleNote = true;
     editor.ui.update9xxPos       = true;
-
-    hideSprite(SPRITE_PATTERN_CURSOR);
 
     redrawSample();
 }

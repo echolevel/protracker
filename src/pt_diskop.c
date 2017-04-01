@@ -157,6 +157,25 @@ void setVisualPathToCwd(void)
 
 int8_t diskOpSetPath(const char *path, uint8_t cache)
 {
+    DIR *dirp;
+
+    if ((path == NULL) || (*path == '\0'))
+    {
+        setVisualPathToCwd();
+        displayErrorMsg("CAN'T OPEN DIR !");
+        return (false);
+    }
+
+    // test first if we can open the directory
+    dirp = opendir(path);
+    if (dirp == NULL)
+    {
+        setVisualPathToCwd();
+        displayErrorMsg("CAN'T OPEN DIR !");
+        return (false);
+    }
+    closedir(dirp);
+
     if ((path != NULL) && (*path != '\0') && (chdir(path) == 0))
     {
         setVisualPathToCwd();
@@ -168,12 +187,10 @@ int8_t diskOpSetPath(const char *path, uint8_t cache)
             editor.ui.updateDiskOpFileList = true;
 
         editor.diskop.scrollOffset = 0;
-
         return (true);
     }
 
     setVisualPathToCwd();
-
     displayErrorMsg("CAN'T OPEN DIR !");
     return (false);
 }
@@ -190,10 +207,8 @@ int8_t allocDiskOpVars(void)
     editor.entryNameTmp = (char *)(calloc(PATH_MAX_LEN + 1, sizeof (char)));
     editor.currPath     = (char *)(calloc(PATH_MAX_LEN + 1, sizeof (char)));
 
-    if ((editor.fileNameTmp == NULL) || (editor.entryNameTmp == NULL) ||(editor.currPath  == NULL))
-    {
+    if ((editor.fileNameTmp == NULL) || (editor.entryNameTmp == NULL) ||(editor.currPath == NULL))
         return (false); // allocated leftovers are free'd lateron
-    }
 
     return (true);
 }
@@ -214,14 +229,14 @@ void freeDiskOpFileMem(void)
         if (!editor.errorMsgActive)
             pointerSetMode(POINTER_MODE_READ_DIR, NO_CARRY);
 
-        for (i = 0; i < editor.diskop.numFiles; ++i)
-        {
-            if (diskOpEntry[i].filename    != NULL) free(diskOpEntry[i].filename);
-            if (diskOpEntry[i].dateChanged != NULL) free(diskOpEntry[i].dateChanged);
-        }
-
         if (diskOpEntry != NULL)
         {
+            for (i = 0; i < editor.diskop.numFiles; ++i)
+            {
+                if (diskOpEntry[i].filename    != NULL) free(diskOpEntry[i].filename);
+                if (diskOpEntry[i].dateChanged != NULL) free(diskOpEntry[i].dateChanged);
+            }
+
             free(diskOpEntry);
             diskOpEntry = NULL;
         }
