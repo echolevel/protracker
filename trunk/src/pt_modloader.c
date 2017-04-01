@@ -960,10 +960,12 @@ static mem_t *mopen(const uint8_t *src, uint32_t length)
 {
     mem_t *b;
 
-    if ((src == NULL) || (length == 0)) return (NULL);
+    if ((src == NULL) || (length == 0))
+        return (NULL);
 
     b = (mem_t *)(malloc(sizeof (mem_t)));
-    if (b == NULL) return (NULL);
+    if (b == NULL)
+        return (NULL);
 
     b->_base   = (uint8_t *)(src);
     b->_ptr    = (uint8_t *)(src);
@@ -1010,11 +1012,12 @@ static size_t mread(void *buffer, size_t size, size_t count, mem_t *buf)
     int32_t pcnt;
     size_t wrcnt;
 
-    if (buf       == NULL) return (0);
-    if (buf->_ptr == NULL) return (0);
+    if ((buf == NULL) || (buf->_ptr == NULL))
+        return (0);
 
     wrcnt = size * count;
-    if ((size == 0) || buf->_eof) return (0);
+    if ((size == 0) || buf->_eof)
+        return (0);
 
     pcnt = (buf->_cnt > wrcnt) ? wrcnt : buf->_cnt;
     memcpy(buffer, buf->_ptr, pcnt);
@@ -1034,7 +1037,8 @@ static size_t mread(void *buffer, size_t size, size_t count, mem_t *buf)
 
 static void mseek(mem_t *buf, int32_t offset, int32_t whence)
 {
-    if (buf == NULL) return;
+    if (buf == NULL)
+        return;
 
     if (buf->_base)
     {
@@ -1058,23 +1062,25 @@ static void mseek(mem_t *buf, int32_t offset, int32_t whence)
 }
 
 /*
-** Code taken from Heikki Orsila's amigadepack.
+** Code taken from Heikki Orsila's amigadepack. Seems to have no license,
+** so I'll assume it fits into wtfpl (wtfpl.net). Heikki should contact me
+** if it shall not.
 ** Modified by 8bitbubsy
 **/
 
-#define PP_READ_BITS(nbits, var) do {        \
+#define PP_READ_BITS(nbits, var) do {       \
   bitCnt = (nbits);                         \
-  while (bitsLeft < bitCnt) {              \
+  while (bitsLeft < bitCnt) {               \
     if (bufSrc < src) return (false);       \
-    bitBuffer |= (*--bufSrc << bitsLeft); \
+    bitBuffer |= (*--bufSrc << bitsLeft);   \
     bitsLeft += 8;                          \
-  }                                          \
-  (var) = 0;                                 \
-  bitsLeft -= bitCnt;                      \
+  }                                         \
+  (var) = 0;                                \
+  bitsLeft -= bitCnt;                       \
   while (bitCnt--) {                        \
     (var) = ((var) << 1) | (bitBuffer & 1); \
     bitBuffer >>= 1;                        \
-  }                                          \
+  }                                         \
 } while (0);
 
 uint8_t ppdecrunch(uint8_t *src, uint8_t *dst, uint8_t *offsetLens, uint32_t srcLen, uint32_t dstLen, uint8_t skipBits)
@@ -1082,7 +1088,8 @@ uint8_t ppdecrunch(uint8_t *src, uint8_t *dst, uint8_t *offsetLens, uint32_t src
     uint8_t *bufSrc, *dstEnd, *out, bitsLeft, bitCnt;
     uint32_t x, todo, offBits, offset, written, bitBuffer;
 
-    if ((src == NULL) || (dst == NULL) || (offsetLens == NULL)) return (false);
+    if ((src == NULL) || (dst == NULL) || (offsetLens == NULL))
+        return (false);
 
     bitsLeft  = 0;
     bitBuffer = 0;
@@ -1200,7 +1207,7 @@ void setupNewMod(void)
     editor.sampleZero         = false;
     editor.keypadSampleOffset = 0;
 
-    setLEDFilter(false);  // real PT doesn't do this there, but that's insane
+    setLEDFilter(false); // real PT doesn't do this there, but that's insane
 
     memset(editor.ui.pattNames, 0, MAX_PATTERNS * 16);
 

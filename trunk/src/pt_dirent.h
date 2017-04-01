@@ -28,7 +28,6 @@ typedef struct dirent
 typedef struct DIR
 {
     dirent fd;
-    char path[FILENAME_MAX];
     HANDLE fHandle;
     WIN32_FIND_DATAA fData;
 } DIR;

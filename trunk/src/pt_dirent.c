@@ -14,6 +14,7 @@
 
 DIR *opendir(const char *name)
 {
+    char path[FILENAME_MAX];
     DIR *dirp;
 
     if (strlen(name) > (FILENAME_MAX - 3))
@@ -23,15 +24,15 @@ DIR *opendir(const char *name)
     if (dirp == NULL)
         return (NULL);
 
-    if (GetFullPathNameA(name, FILENAME_MAX - 3, dirp->path, NULL) == 0)
+    if (GetFullPathNameA(name, FILENAME_MAX - 3, path, NULL) == 0)
     {
         free(dirp);
         return (NULL);
     }
 
-    strcat(dirp->path, "\\*"); /* append '\*' to end of path */
+    strcat(path, "\\*"); // append '\*' to end of path
 
-    dirp->fHandle = FindFirstFileA(dirp->path, &dirp->fData);
+    dirp->fHandle = FindFirstFileA(path, &dirp->fData);
     if (dirp->fHandle == INVALID_HANDLE_VALUE)
     {
         free(dirp);

@@ -135,10 +135,10 @@ int8_t sampleNameIsEmpty(char *name)
     for (i = 0; i < 22; ++i)
     {
         if (name[i] == '\0')
-            n++;
+            ++n;
     }
 
-    return ((n == 22) ? true : false);
+    return (n == 22);
 }
 
 int8_t moduleNameIsEmpty(char *name)
@@ -152,10 +152,10 @@ int8_t moduleNameIsEmpty(char *name)
     for (i = 0; i < 20; ++i)
     {
         if (name[i] == '\0')
-            n++;
+            ++n;
     }
 
-    return ((n == 20) ? true : false);
+    return (n == 20);
 }
 
 void updateWindowTitle(int8_t modified)
