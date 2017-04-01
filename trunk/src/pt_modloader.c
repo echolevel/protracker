@@ -238,6 +238,7 @@ static int8_t checkModType(const char *buf)
     else if (!strncmp(buf, "FLT4", 4)) return (FORMAT_FLT4); // StarTrekker (4ch), handled as ProTracker v2.x
     else if (!strncmp(buf, "4CHN", 4)) return (FORMAT_4CHN); // FastTracker II (4ch), handled as ProTracker v2.x
     else if (!strncmp(buf, "N.T.", 4)) return (FORMAT_MK);   // NoiseTracker 1.0, handled as ProTracker v2.x
+    else if (!strncmp(buf, "M&K!", 4)) return (FORMAT_FEST); // Special NoiseTracker format (used in music disks?)
     else if (!strncmp(buf, "FEST", 4)) return (FORMAT_FEST); // Special NoiseTracker format (used in music disks?)
 
     return (FORMAT_UNKNOWN); // may be The Ultimate SoundTracker, 15 samples
@@ -569,11 +570,7 @@ module_t *modLoad(const char *fileName)
 
         newModule->head.format = FORMAT_STK;
 
-        if (newModule->head.restartPos == 120)
-        {
-            newModule->head.restartPos = 125;
-        }
-        else
+        if (newModule->head.restartPos != 120) // 120 = 125 (?)
         {
             if (newModule->head.restartPos > 239)
                 newModule->head.restartPos = 239;
@@ -645,9 +642,9 @@ module_t *modLoad(const char *fileName)
                 note->command = bytes[2] & 0x0F;
                 note->param   = bytes[3];
 
-                if (newModule->head.format == FORMAT_FEST)
+                if ((newModule->head.format == FORMAT_NT) || (newModule->head.format == FORMAT_FEST))
                 {
-                    // Any Dxx == D00 in FEST modules
+                    // Any Dxx == D00 in N.T./FEST modules
                     if (note->command == 0x0D)
                         note->param = 0x00;
                 }
