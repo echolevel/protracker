@@ -3217,7 +3217,7 @@ void toggleFullscreen(void)
 int8_t setupVideo(void)
 {
     int32_t screenW, screenH;
-    uint32_t windowFlags, rendererFlags;
+    uint32_t windowFlags, rendererFlags, textureFormat;
     SDL_DisplayMode dm;
 
     screenW = SCREEN_W * editor.ui.videoScaleFactor;
@@ -3225,10 +3225,13 @@ int8_t setupVideo(void)
 
     windowFlags   = 0;
     rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
+    textureFormat = SDL_PIXELFORMAT_RGB888;
+
+#ifdef __APPLE__
+    textureFormat = SDL_PIXELFORMAT_ARGB8888; // this seems to be slightly faster in OS X / macOS
+#endif
 
 #ifdef _WIN32
-    SDL_SetHint(SDL_HINT_TIMER_RESOLUTION, "1"); // force high resolution timers on Windows
-
 #if SDL_PATCHLEVEL >= 4
     SDL_SetHint(SDL_HINT_WINDOWS_NO_CLOSE_ON_ALT_F4, "1"); // this is for Windows only
 #endif
@@ -3254,7 +3257,6 @@ int8_t setupVideo(void)
         }
     }
 
-    SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
     SDL_SetWindowTitle(window, "ProTracker v2.3D");
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
@@ -3283,7 +3285,7 @@ int8_t setupVideo(void)
         {
             showErrorMsgBox("Couldn't create SDL renderer:\n" \
                            "%s\n\n" \
-                           "Is your GPU (+ driver) too old? If using Windows, try running the old XP build at 16-bits.org", SDL_GetError());
+                           "Is your GPU (+ driver) too old?", SDL_GetError());
 
             return (false);
         }
@@ -3297,12 +3299,12 @@ int8_t setupVideo(void)
 
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STREAMING, SCREEN_W, SCREEN_H);
+    texture = SDL_CreateTexture(renderer, textureFormat, SDL_TEXTUREACCESS_STREAMING, SCREEN_W, SCREEN_H);
     if (texture == NULL)
     {
-        showErrorMsgBox("Couldn't create a %dx%d 24bpp (RGB888) GPU texture:\n" \
+        showErrorMsgBox("Couldn't create a %dx%d GPU texture:\n" \
                         "%s\n\n" \
-                        "Is your GPU (+ driver) too old? If using Windows, try running the old XP build at 16-bits.org", SCREEN_W, SCREEN_H, SDL_GetError());
+                        "Is your GPU (+ driver) too old?", SCREEN_W, SCREEN_H, SDL_GetError());
 
         return (false);
     }
@@ -3318,6 +3320,9 @@ int8_t setupVideo(void)
     }
 
     SDL_ShowCursor(SDL_DISABLE);
+
+    if (!vsync60HzPresent)
+        SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
 
     return (true);
 }

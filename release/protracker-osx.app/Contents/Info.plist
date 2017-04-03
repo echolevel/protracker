@@ -30,5 +30,7 @@
     <string>10.5</string>
     <key>CGDisableCoalescedUpdates</key>
     <true/>
+    <key>NSHighResolutionCapable<key>
+    <false/>
 </dict>
 </plist>
