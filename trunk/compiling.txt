@@ -30,17 +30,16 @@ Compiled binaries are always available at http://www.16-bits.org/
  6. The correct config file location is '~/.protracker/protracker.ini'.
  
 == COMPILING PROTRACKER ON LINUX ==
- 1. Make sure you have 'build-essentials' and 'subversion' installed (if needed)
- 2. Install 'libsdl2-dev'
- 3. Open a terminal and run the following:
+ 1. Install 'subversion' and 'libsdl2-dev' (sdl2 v2.0.5 recommended)
+ 2. Open a terminal and run the following:
      svn checkout svn://svn.code.sf.net/p/protracker/code/trunk pt-clone-code
      cd pt-clone-code
      chmod +x make-linux.sh (make-freebsd.sh for FreeBSD)
      ./make-linux.sh        (make-freebsd.sh for FreeBSD)
- 4. Done! The binary ('protracker') is now in pt-clone-code/release/
+ 3. Done! The binary ('protracker') is now in pt-clone-code/release/
     To run it, try double-clicking, or type ./protracker   
- 5. To get ALT+F4 (copy pattern) and ALT+F5 (paste pattern) working,
+ 4. To get ALT+F4 (copy pattern) and ALT+F5 (paste pattern) working,
     you have to change these keyboard shortcuts in your OS to something else.
-    The correct config file location is '~/.protracker/protracker.ini'.
+    An alternative config file location is '~/.protracker/protracker.ini'.
          
 EOF
