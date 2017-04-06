@@ -409,27 +409,24 @@ void updateMouseScaling(void)
 
 void updateMousePos(void)
 {
-    int32_t mx, my;
-    float mx_f, my_f;
+    uint8_t updateMousePos;
 
-    SDL_PumpEvents(); // force input read right now
+    updateMousePos = false;
 
-    SDL_GetMouseState(&mx, &my);
+    if (input.mouse.x != input.mouse.newlyPolledX)
+    {
+        input.mouse.x  = input.mouse.newlyPolledX;
+        updateMousePos = true;
+    }
 
-    mx_f = mx / input.mouse.scaleX_f;
-    my_f = my / input.mouse.scaleY_f;
+    if (input.mouse.y != input.mouse.newlyPolledY)
+    {
+        input.mouse.y  = input.mouse.newlyPolledY;
+        updateMousePos = true;
+    }
 
-    mx = (int32_t)(mx_f + 0.5f);
-    my = (int32_t)(my_f + 0.5f);
-
-    // clamp to edges
-    mx = CLAMP(mx, 0, SCREEN_W - 1);
-    my = CLAMP(my, 0, SCREEN_H - 1);
-
-    setSpritePos(SPRITE_MOUSE_POINTER, mx, my);
-
-    input.mouse.x = mx;
-    input.mouse.y = my;
+    if (updateMousePos)
+        setSpritePos(SPRITE_MOUSE_POINTER, (int16_t)(input.mouse.x), (int16_t)(input.mouse.y));
 }
 
 void mouseButtonUpHandler(uint8_t mouseButton)

@@ -18,6 +18,7 @@ void updateEditOp(void);
 void updateDiskOp(void);
 void toggleFullscreen(void);
 uint32_t _50HzCallBack(uint32_t interval, void *param);
+uint32_t mouseCallback(uint32_t interval, void *param);
 void videoClose(void);
 int8_t unpackBMPs(void);
 void createGraphics(void);

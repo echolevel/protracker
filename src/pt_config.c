@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdint.h>
 #ifndef _WIN32
-#include <dlfcn.h>
 #include <unistd.h>
 #endif
 #include "pt_helpers.h"
@@ -68,30 +67,23 @@ int8_t loadConfig(void)
 
     iniConfigFound = false;
 
-#ifndef _WIN32
-    // first check for $HOME/.protracker
-    if ((changePathToHome() == true) && (chdir(".protracker") == 0))
-    {
-        configFile = fopen("protracker.ini", "r");
-        if (configFile != NULL)
-        {
-            iniConfigFound = true;
-        }
-        else
-        {
-            // check in the program directory
-            if (changePathToProgramPath())
-            {
-                configFile = fopen("protracker.ini", "r");
-                if (configFile != NULL)
-                    iniConfigFound = true;
-            }
-        }
-    }
-#else
+#ifdef _WIN32
     configFile = fopen("protracker.ini", "r");
     if (configFile != NULL)
         iniConfigFound = true;
+#else
+    // check in program directory
+    configFile = fopen("protracker.ini", "r");
+    if (configFile != NULL)
+        iniConfigFound = true;
+
+    // check in ~/.protracker/
+    if (!iniConfigFound && changePathToHome() && (chdir(".protracker") == 0))
+    {
+        configFile = fopen("protracker.ini", "r");
+        if (configFile != NULL)
+            iniConfigFound = true;
+    }
 #endif
 
     if (iniConfigFound)
@@ -272,32 +264,25 @@ int8_t loadConfig(void)
     // Load PT.Config (if available)
     ptConfigFound = false;
 
-#ifndef _WIN32
-    if ((changePathToHome() == true) && (chdir(".protracker") == 0))
-    {
-        configFile = loadPTDotConfig();
-        if (configFile != NULL)
-        {
-            ptConfigFound = true;
-        }
-        else
-        {
-            if (changePathToProgramPath())
-            {
-                configFile = loadPTDotConfig();
-                if (configFile != NULL)
-                    iniConfigFound = true;
-            }
-        }
-    }
-#else
+#ifdef _WIN32
     configFile = loadPTDotConfig();
     if (configFile != NULL)
         ptConfigFound = true;
-#endif
+#else
+    // check in program directory
+    configFile = loadPTDotConfig();
+    if (configFile != NULL)
+        iniConfigFound = true;
 
-    // change path to home for UNIX/BSD systems
-#ifndef _WIN32
+    // check in ~/.protracker/
+    if (!iniConfigFound && changePathToHome() && (chdir(".protracker") == 0))
+    {
+        configFile = loadPTDotConfig();
+        if (configFile != NULL)
+            ptConfigFound = true;
+    }
+
+    // set path to home now.
     changePathToHome();
 #endif
 

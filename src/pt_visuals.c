@@ -3190,12 +3190,36 @@ uint32_t _50HzCallBack(uint32_t interval, void *param)
     return (interval);
 }
 
+uint32_t mouseCallback(uint32_t interval, void *param)
+{
+    int32_t mx, my;
+    float mx_f, my_f;
+
+    SDL_GetMouseState(&mx, &my);
+
+    mx_f = mx / input.mouse.scaleX_f;
+    my_f = my / input.mouse.scaleY_f;
+
+    mx = (int32_t)(mx_f + 0.5f);
+    my = (int32_t)(my_f + 0.5f);
+
+    /* clamp to edges */
+    mx = CLAMP(mx, 0, SCREEN_W - 1);
+    my = CLAMP(my, 0, SCREEN_H - 1);
+
+    input.mouse.newlyPolledX = mx;
+    input.mouse.newlyPolledY = my;
+
+    (void)(param); // make compiler happy
+
+    return (interval);
+}
+
 void toggleFullscreen(void)
 {
     int32_t w, h;
 
     fullscreen ^= 1;
-
     if (fullscreen)
     {
         SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -3206,12 +3230,13 @@ void toggleFullscreen(void)
         SDL_SetWindowFullscreen(window, 0);
         SDL_SetWindowSize(window, SCREEN_W * editor.ui.videoScaleFactor, SCREEN_H * editor.ui.videoScaleFactor);
         SDL_SetWindowGrab(window, SDL_FALSE);
+        SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     }
-
-    updateMouseScaling();
 
     SDL_GetWindowSize(window, &w, &h);
     SDL_WarpMouseInWindow(window, w / 2, h / 2);
+
+    updateMouseScaling();
 }
 
 int8_t setupVideo(void)
@@ -3323,6 +3348,8 @@ int8_t setupVideo(void)
 
     if (!vsync60HzPresent)
         SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
+
+    updateMouseScaling();
 
     return (true);
 }

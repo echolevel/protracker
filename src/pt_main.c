@@ -48,7 +48,7 @@ uint8_t fullscreen = false, vsync60HzPresent = false;
 
 static uint64_t next60HzTime_64bit;
 
-static SDL_TimerID timer50Hz;
+static SDL_TimerID timer50Hz, mouseTimer;
 static module_t *tempMod;
 
 static void handleInput(void);
@@ -62,6 +62,7 @@ void cleanUp(void) // never call this inside the main loop!
     audioClose();
 
     SDL_RemoveTimer(timer50Hz);
+    SDL_RemoveTimer(mouseTimer);
 
     modFree();
 
@@ -206,6 +207,28 @@ int main(int argc, char *argv[])
         return (1);
     }
 
+    timer50Hz = SDL_AddTimer(1000 / 50, _50HzCallBack, NULL);
+    if (timer50Hz == 0)
+    {
+        showErrorMsgBox("Couldn't create 50Hz timer:\n%s", SDL_GetError());
+
+        cleanUp();
+        SDL_Quit();
+
+        return (1);
+    }
+
+    mouseTimer = SDL_AddTimer(1000 / 100, mouseCallback, NULL);
+    if (mouseTimer == 0)
+    {
+        showErrorMsgBox("Couldn't create 100Hz timer for mouse:\n%s", SDL_GetError());
+
+        cleanUp();
+        SDL_Quit();
+
+        return (1);
+    }
+
     setupSprites();
     diskOpSetInitPath();
 
@@ -234,10 +257,6 @@ int main(int argc, char *argv[])
 
     if (!editor.configFound)
         terminalPrintf("Warning: could not load config file, using default settings.\n\n");
-
-    // setup timer stuff
-    next60HzTime_64bit = SDL_GetPerformanceCounter() + (uint64_t)(((double)(SDL_GetPerformanceFrequency()) / 60.0) + 0.5);
-    timer50Hz          = SDL_AddTimer(1000 / 50, _50HzCallBack, NULL);
 
     terminalPrintf("Configuration:\n");
     terminalPrintf("- Video upscaling factor: %dx\n", ptConfig.videoScaleFactor);
@@ -272,11 +291,13 @@ int main(int argc, char *argv[])
         setStatusMessage(editor.allRightText, DO_CARRY);
     }
 
-    updateMouseScaling();
     displayMainScreen();
     fillToVuMetersBgBuffer();
     updateCursorPos();
     updateMousePos();
+
+    // setup timer stuff
+    next60HzTime_64bit = SDL_GetPerformanceCounter() + (uint64_t)(((double)(SDL_GetPerformanceFrequency()) / 60.0) + 0.5);
 
     editor.programRunning = true;
     while (editor.programRunning)

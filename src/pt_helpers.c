@@ -1,17 +1,9 @@
-#define _GNU_SOURCE
-// Dl_info and dladdr for GNU/Linux needs this define before header including
-
 #include <SDL2/SDL.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-#ifdef _WIN32
-#include <windows.h>
-#include <direct.h>
-#include <io.h>
-#else
-#include <dlfcn.h>
+#ifndef _WIN32
 #include <unistd.h>
 #endif
 #include "pt_helpers.h"
@@ -71,56 +63,6 @@ int8_t changePathToHome(void)
         return (true);
 
     return (false);
-}
-
-// this should ONLY be called AFTER initializeVars()
-int8_t changePathToProgramPath(void)
-{
-    char *tmpPath;
-    int32_t i, pathLen;
-    Dl_info info;
-
-    tmpPath = (char *)(calloc(PATH_MAX_LEN + 1, 1));
-    if (tmpPath == NULL)
-        return (false);
-
-    if ((dladdr((void *)(&changePathToProgramPath), &info) == 0) || (realpath(info.dli_fname, tmpPath) == NULL))
-    {
-        free(tmpPath);
-        return (false);
-    }
-
-    // truncate file name
-    pathLen = strlen(tmpPath);
-    if (pathLen == 0)
-    {
-        free(tmpPath);
-        return (false);
-    }
-
-    for (i = pathLen - 1; i >= 0; --i)
-    {
-        if (tmpPath[i] == '/')
-        {
-            tmpPath[i] = '\0';
-            break;
-        }
-    }
-
-    if (chdir(tmpPath) != 0)
-    {
-        free(tmpPath);
-        return (false);
-    }
-
-    free(tmpPath);
-
-#ifdef __APPLE__
-    if (chdir("../../../") != 0) // package.app/Contents/MacOS
-        return (false);
-#endif
-
-    return (true);
 }
 #endif
 
