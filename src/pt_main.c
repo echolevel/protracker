@@ -91,7 +91,7 @@ void syncThreadTo60Hz(void)
     // this routine almost never delays if we have 60Hz vsync
 
     uint64_t timeNow_64bit;
-    double delayMs_f, perfFreq_f;
+    double delayMs_f, perfFreq_f, frameLength_f;
 
     perfFreq_f = (double)(SDL_GetPerformanceFrequency()); // should be safe for double
     if (perfFreq_f == 0.0)
@@ -103,6 +103,9 @@ void syncThreadTo60Hz(void)
         delayMs_f = (double)(next60HzTime_64bit - timeNow_64bit) * (1000.0 / perfFreq_f); // should be safe for double
         SDL_Delay((uint32_t)(delayMs_f + 0.5));
     }
+
+    frameLength_f = perfFreq_f / VBLANK_HZ;
+    next60HzTime_64bit += (uint64_t)(frameLength_f + 0.5);
 }
 
 int main(int argc, char *argv[])
@@ -297,7 +300,7 @@ int main(int argc, char *argv[])
     updateMousePos();
 
     // setup timer stuff
-    next60HzTime_64bit = SDL_GetPerformanceCounter() + (uint64_t)(((double)(SDL_GetPerformanceFrequency()) / 60.0) + 0.5);
+    next60HzTime_64bit = SDL_GetPerformanceCounter() + (uint64_t)(((double)(SDL_GetPerformanceFrequency()) / VBLANK_HZ) + 0.5);
 
     editor.programRunning = true;
     while (editor.programRunning)
