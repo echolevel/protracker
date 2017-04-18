@@ -7,10 +7,16 @@ ProTracker v2.3D clone for modern platforms                            2010-2017
  
  == Frequently Asked Questions (FAQ) ==
  
+ * Alt+F5/ALT+F5 (copy/paste) doesn't work!
+ - Windows: Uninstall 'GeForce Experience' if you have NVIDIA drivers installed,
+   ALT+F5 is already taken by it and that program is junk anyways (imo).
+ - OS X/mac OS/Linux: You need to remove or re-bind ALT+F4/ALT+F5 to other keys
+   in your OS settings.
+   
  * I get a "CONFIG NOT FOUND" error, even if I have protracker.ini in the same
    directory as the program...
- - This is a problem with macOS 10.12. Make a directory called .protracker in your
-   home directory, and copy protracker.ini inside it.
+ - This is a problem with macOS 10.12. Make a directory called .protracker in
+   your home directory, and copy protracker.ini inside it.
  
  * Is there a way to make the window bigger?
  - Set VIDEOSCALE to 2X, 3x or 4X in protracker.ini.
