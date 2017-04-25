@@ -311,7 +311,6 @@ static int8_t diskOpFillBufferMod(void)
     DIR *dir;
     struct dirent *ent;
 #ifndef _WIN32
-    int32_t fileHandle;
     struct stat fileStat;
 #endif
 
@@ -476,8 +475,7 @@ static int8_t diskOpFillBufferMod(void)
 
             strcpy(diskOpEntry[fileIndex].dateChanged, ent->lastModDate);
 #else
-            fileHandle = open(diskOpEntry[fileIndex].filename, O_RDONLY);
-            if (fileHandle != -1)
+            if (stat(ent->d_name, &fileStat) == 0)
             {
                 diskOpEntry[fileIndex].dateChanged = (char *)(malloc(6 + 1));
                 if (diskOpEntry[fileIndex].dateChanged == NULL)
@@ -490,9 +488,6 @@ static int8_t diskOpFillBufferMod(void)
 
                     return (false);
                 }
-
-                fstat(fileHandle, &fileStat);
-                close(fileHandle);
 
                 diskOpEntry[fileIndex].size = (uint32_t)(fileStat.st_size);
                 strftime(diskOpEntry[fileIndex].dateChanged, 7, "%d%m%y", localtime(&fileStat.st_mtime));
@@ -550,7 +545,6 @@ static int8_t diskOpFillBufferSmp(void)
     DIR *dir;
     struct dirent *ent;
 #ifndef _WIN32
-    int32_t fileHandle;
     struct stat fileStat;
 #endif
 
@@ -671,8 +665,7 @@ static int8_t diskOpFillBufferSmp(void)
 
             strcpy(diskOpEntry[fileIndex].dateChanged, ent->lastModDate);
 #else
-            fileHandle = open(diskOpEntry[fileIndex].filename, O_RDONLY);
-            if (fileHandle != -1)
+            if (stat(ent->d_name, &fileStat) == 0)
             {
                 diskOpEntry[fileIndex].dateChanged = (char *)(malloc(6 + 1));
                 if (diskOpEntry[fileIndex].dateChanged == NULL)
@@ -685,10 +678,6 @@ static int8_t diskOpFillBufferSmp(void)
 
                     return (false);
                 }
-
-                fstat(fileHandle, &fileStat);
-                close(fileHandle);
-
 
                 diskOpEntry[fileIndex].size = (uint32_t)(fileStat.st_size);
                 strftime(diskOpEntry[fileIndex].dateChanged, 7, "%d%m%y", localtime(&fileStat.st_mtime));
