@@ -48,7 +48,7 @@
     <TargetName>protracker</TargetName>
     <OutDir>..\..\release\</OutDir>
     <LinkIncremental>false</LinkIncremental>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>../../vs_sdl_include/lib;$(VCInstallDir)lib;$(LibraryPath)</LibraryPath>
@@ -115,10 +115,8 @@
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
+      <Command>xp_pe_patch "..\..\release\protracker.exe" -nb</Command>
+      <Message>Patches the release binary to run on Windows XP</Message>
     </PostBuildEvent>
     <Manifest>
       <VerboseOutput>false</VerboseOutput>

@@ -307,11 +307,13 @@ static int8_t diskOpFillBufferMod(void)
 {
     char tempStr[18];
     uint16_t tickCounter;
-    int32_t fileHandle;
     uint32_t fileIndex, fileNameLength;
     DIR *dir;
     struct dirent *ent;
+#ifndef _WIN32
+    int32_t fileHandle;
     struct stat fileStat;
+#endif
 
     editor.diskop.scrollOffset = 0;
 
@@ -457,10 +459,27 @@ static int8_t diskOpFillBufferMod(void)
         // get file size and modification date
         if (diskOpEntry[fileIndex].type == DISKOP_FILE)
         {
+#ifdef _WIN32
+            diskOpEntry[fileIndex].size = ent->d_size;
+
+            diskOpEntry[fileIndex].dateChanged = (char *)(malloc(6 + 1));
+            if (diskOpEntry[fileIndex].dateChanged == NULL)
+            {
+                closedir(dir);
+                freeDiskOpFileMem();
+
+                displayErrorMsg(editor.outOfMemoryText);
+                terminalPrintf(editor.diskOpListOoMText);
+
+                return (false);
+            }
+
+            strcpy(diskOpEntry[fileIndex].dateChanged, ent->lastModDate);
+#else
             fileHandle = open(diskOpEntry[fileIndex].filename, O_RDONLY);
             if (fileHandle != -1)
             {
-                diskOpEntry[fileIndex].dateChanged = (char *)(malloc(7));
+                diskOpEntry[fileIndex].dateChanged = (char *)(malloc(6 + 1));
                 if (diskOpEntry[fileIndex].dateChanged == NULL)
                 {
                     closedir(dir);
@@ -478,6 +497,7 @@ static int8_t diskOpFillBufferMod(void)
                 diskOpEntry[fileIndex].size = (uint32_t)(fileStat.st_size);
                 strftime(diskOpEntry[fileIndex].dateChanged, 7, "%d%m%y", localtime(&fileStat.st_mtime));
             }
+#endif
         }
         else
         {
@@ -526,11 +546,13 @@ static int8_t diskOpFillBufferSmp(void)
 {
     char tempStr[18];
     uint16_t tickCounter;
-    int32_t fileHandle;
     uint32_t fileIndex, fileNameLength;
     DIR *dir;
     struct dirent *ent;
+#ifndef _WIN32
+    int32_t fileHandle;
     struct stat fileStat;
+#endif
 
     editor.diskop.scrollOffset = 0;
 
@@ -632,10 +654,27 @@ static int8_t diskOpFillBufferSmp(void)
         // get file size and modification date
         if (diskOpEntry[fileIndex].type == DISKOP_FILE)
         {
+#ifdef _WIN32
+            diskOpEntry[fileIndex].size = ent->d_size;
+
+            diskOpEntry[fileIndex].dateChanged = (char *)(malloc(6 + 1));
+            if (diskOpEntry[fileIndex].dateChanged == NULL)
+            {
+                closedir(dir);
+                freeDiskOpFileMem();
+
+                displayErrorMsg(editor.outOfMemoryText);
+                terminalPrintf(editor.diskOpListOoMText);
+
+                return (false);
+            }
+
+            strcpy(diskOpEntry[fileIndex].dateChanged, ent->lastModDate);
+#else
             fileHandle = open(diskOpEntry[fileIndex].filename, O_RDONLY);
             if (fileHandle != -1)
             {
-                diskOpEntry[fileIndex].dateChanged = (char *)(malloc(7));
+                diskOpEntry[fileIndex].dateChanged = (char *)(malloc(6 + 1));
                 if (diskOpEntry[fileIndex].dateChanged == NULL)
                 {
                     closedir(dir);
@@ -650,9 +689,11 @@ static int8_t diskOpFillBufferSmp(void)
                 fstat(fileHandle, &fileStat);
                 close(fileHandle);
 
+
                 diskOpEntry[fileIndex].size = (uint32_t)(fileStat.st_size);
                 strftime(diskOpEntry[fileIndex].dateChanged, 7, "%d%m%y", localtime(&fileStat.st_mtime));
             }
+#endif
         }
         else
         {
