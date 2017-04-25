@@ -6,10 +6,11 @@
 
 #define WIN32_LEAN_AND_MEAN
 
-#include <windows.h>
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <windows.h>
 #include "pt_dirent.h"
 
 DIR *opendir(const char *name)
@@ -44,6 +45,8 @@ DIR *opendir(const char *name)
 
 struct dirent *readdir(DIR *dirp)
 {
+    SYSTEMTIME stUTC;
+
     if ((dirp == NULL) || (dirp->fHandle == NULL))
         return (NULL);
 
@@ -57,6 +60,14 @@ struct dirent *readdir(DIR *dirp)
     strcpy(dirp->fd.d_name, dirp->fData.cFileName);
     dirp->fd.d_namlen = (uint16_t)(strlen(dirp->fd.d_name));
     dirp->fd.d_type = (dirp->fData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? DT_DIR : DT_REG;
+    dirp->fd.d_size = (dirp->fData.nFileSizeHigh > 0) ? 0xFFFFFFFF : dirp->fData.nFileSizeLow;
+
+    if (dirp->fd.d_type == DT_REG)
+    {
+        FileTimeToSystemTime(&dirp->fData.ftLastWriteTime, &stUTC);
+        // we want to be ABSOLUTELY sure that this doesn't overflow in ANY circumstance, hence unneeded modulus on day/month
+        sprintf(dirp->fd.lastModDate, "%02d%02d%02d", stUTC.wDay % (99 + 1), stUTC.wMonth % (99 + 1), stUTC.wYear % (99 + 1));
+    }
 
     return (&dirp->fd);
 }

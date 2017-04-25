@@ -23,6 +23,10 @@ typedef struct dirent
     char d_name[FILENAME_MAX];
     uint16_t d_namlen;
     uint32_t d_type;
+#ifdef _WIN32
+    uint32_t d_size;
+    char lastModDate[6 + 1];
+#endif
 } dirent;
 
 typedef struct DIR
