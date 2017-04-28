@@ -352,7 +352,7 @@ int main(int argc, char *argv[])
         flipFrame();
 
         sinkVisualizerBars();
-#ifndef _WIN32
+#ifdef _WIN32
         updateQuadrascope();
 #endif
     }
