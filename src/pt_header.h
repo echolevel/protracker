@@ -286,7 +286,7 @@ struct input_t
         int8_t buttonWaiting, leftButtonPressed, rightButtonPressed;
         uint8_t repeatCounter, repeatCounter_2, buttonWaitCounter;
         int32_t lastGUIButton, lastGUIButton_2, prevX, prevY;
-        int32_t x, y, lastMouseX, newlyPolledX, newlyPolledY;
+        int16_t x, y, lastMouseX;
         float scaleX_f, scaleY_f;
     } mouse;
 } input;
