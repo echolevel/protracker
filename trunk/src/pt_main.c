@@ -48,7 +48,7 @@ uint8_t fullscreen = false, vsync60HzPresent = false;
 
 static uint64_t next60HzTime_64bit;
 
-static SDL_TimerID timer50Hz, mouseTimer;
+static SDL_TimerID timer50Hz;
 static module_t *tempMod;
 
 static void handleInput(void);
@@ -62,7 +62,6 @@ void cleanUp(void) // never call this inside the main loop!
     audioClose();
 
     SDL_RemoveTimer(timer50Hz);
-    SDL_RemoveTimer(mouseTimer);
 
     modFree();
 
@@ -106,6 +105,34 @@ void syncThreadTo60Hz(void)
 
     frameLength_f = perfFreq_f / VBLANK_HZ;
     next60HzTime_64bit += (uint64_t)(frameLength_f + 0.5);
+}
+
+void readMouseXY(void)
+{
+    int16_t x, y;
+    int32_t mx, my;
+    float mx_f, my_f;
+
+    SDL_PumpEvents();
+    SDL_GetMouseState(&mx, &my);
+
+    mx_f = mx / input.mouse.scaleX_f;
+    my_f = my / input.mouse.scaleY_f;
+
+    mx = (int32_t)(mx_f + 0.5f);
+    my = (int32_t)(my_f + 0.5f);
+
+    /* clamp to edges */
+    mx = CLAMP(mx, 0, SCREEN_W - 1);
+    my = CLAMP(my, 0, SCREEN_H - 1);
+
+    x = (int16_t)(mx);
+    y = (int16_t)(my);
+
+    input.mouse.x = x;
+    input.mouse.y = y;
+
+    setSpritePos(SPRITE_MOUSE_POINTER, x, y);
 }
 
 int main(int argc, char *argv[])
@@ -221,19 +248,19 @@ int main(int argc, char *argv[])
         return (1);
     }
 
-    mouseTimer = SDL_AddTimer(1000 / 100, mouseCallback, NULL);
-    if (mouseTimer == 0)
-    {
-        showErrorMsgBox("Couldn't create 100Hz timer for mouse:\n%s", SDL_GetError());
+    setupSprites();
+    diskOpSetInitPath();
 
+    /* in Windows, we use the STABLE (!) vsync for the scopes */
+#ifndef _WIN32
+    if (!initScopes())
+    {
         cleanUp();
         SDL_Quit();
 
         return (1);
     }
-
-    setupSprites();
-    diskOpSetInitPath();
+#endif
 
     modEntry = createNewMod();
     if (modEntry == NULL)
@@ -297,7 +324,6 @@ int main(int argc, char *argv[])
     displayMainScreen();
     fillToVuMetersBgBuffer();
     updateCursorPos();
-    updateMousePos();
 
     // setup timer stuff
     next60HzTime_64bit = SDL_GetPerformanceCounter() + (uint64_t)(((double)(SDL_GetPerformanceFrequency()) / VBLANK_HZ) + 0.5);
@@ -306,10 +332,9 @@ int main(int argc, char *argv[])
     while (editor.programRunning)
     {
         syncThreadTo60Hz();
+        readMouseXY();
         eraseSprites();
-
         updateKeyModifiers(); // set/clear CTRL/ALT/SHIFT/AMIGA key states
-        updateMousePos();
         handleInput();
         updateMouseCounters();
         handleKeyRepeat(input.keyb.lastRepKey);
@@ -327,7 +352,9 @@ int main(int argc, char *argv[])
         flipFrame();
 
         sinkVisualizerBars();
+#ifndef _WIN32
         updateQuadrascope();
+#endif
     }
 
     cleanUp();

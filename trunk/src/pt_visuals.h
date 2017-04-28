@@ -18,8 +18,8 @@ void updateEditOp(void);
 void updateDiskOp(void);
 void toggleFullscreen(void);
 uint32_t _50HzCallBack(uint32_t interval, void *param);
-uint32_t mouseCallback(uint32_t interval, void *param);
 void videoClose(void);
+uint8_t initScopes(void);
 int8_t unpackBMPs(void);
 void createGraphics(void);
 void displayMainScreen(void);
@@ -38,7 +38,6 @@ void renderTextEditMarker(void);
 void renderEditOpScreen(void);
 void renderSamplerVolBox(void);
 void renderSamplerFiltersBox(void);
-
 void removeTextEditMarker(void);
 void removeClearScreen(void);
 void removeSamplerVolBox(void);

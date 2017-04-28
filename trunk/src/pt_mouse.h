@@ -243,8 +243,6 @@ typedef struct guiButton_t
 } guiButton_t;
 
 void updateMouseScaling(void);
-void updateMousePos(void);
-
 void mouseWheelUpHandler(void);
 void mouseWheelDownHandler(void);
 void mouseButtonUpHandler(uint8_t mouseButton);

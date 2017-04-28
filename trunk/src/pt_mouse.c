@@ -407,28 +407,6 @@ void updateMouseScaling(void)
     input.mouse.scaleY_f = scaleY_f;
 }
 
-void updateMousePos(void)
-{
-    uint8_t updateMousePos;
-
-    updateMousePos = false;
-
-    if (input.mouse.x != input.mouse.newlyPolledX)
-    {
-        input.mouse.x  = input.mouse.newlyPolledX;
-        updateMousePos = true;
-    }
-
-    if (input.mouse.y != input.mouse.newlyPolledY)
-    {
-        input.mouse.y  = input.mouse.newlyPolledY;
-        updateMousePos = true;
-    }
-
-    if (updateMousePos)
-        setSpritePos(SPRITE_MOUSE_POINTER, (int16_t)(input.mouse.x), (int16_t)(input.mouse.y));
-}
-
 void mouseButtonUpHandler(uint8_t mouseButton)
 {
 #ifndef __APPLE__
