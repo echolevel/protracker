@@ -251,6 +251,8 @@ int main(int argc, char *argv[])
     setupSprites();
     diskOpSetInitPath();
 
+    editor.programRunning = true; /* set this before initScopes() */
+
     /* in Windows, we use the STABLE (!) vsync for the scopes */
 #ifndef _WIN32
     if (!initScopes())
@@ -328,7 +330,6 @@ int main(int argc, char *argv[])
     // setup timer stuff
     next60HzTime_64bit = SDL_GetPerformanceCounter() + (uint64_t)(((double)(SDL_GetPerformanceFrequency()) / VBLANK_HZ) + 0.5);
 
-    editor.programRunning = true;
     while (editor.programRunning)
     {
         syncThreadTo60Hz();
