@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <SDL2/SDL.h>
 #ifdef _WIN32
-#define _USE_MATH_DEFINES
 #include <io.h>
 #else
 #include <unistd.h>
@@ -133,7 +132,7 @@ static inline void lossyIntegratorLED(ledFilterCoeff_t filterC, ledFilter_t *fil
     out[1] = filter->led[3];
 }
 
-inline void lossyIntegrator(lossyIntegrator_t *filter, float *in, float *out)
+void lossyIntegrator(lossyIntegrator_t *filter, float *in, float *out)
 {
     float output;
 
@@ -148,7 +147,7 @@ inline void lossyIntegrator(lossyIntegrator_t *filter, float *in, float *out)
     out[1] = output;
 }
 
-inline void lossyIntegratorHighPass(lossyIntegrator_t *filter, float *in, float *out)
+void lossyIntegratorHighPass(lossyIntegrator_t *filter, float *in, float *out)
 {
     float low[2];
 
