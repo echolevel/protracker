@@ -403,8 +403,8 @@ void updateMouseScaling(void)
     if (scaleX_f == 0.0f) scaleX_f = 1.0f;
     if (scaleY_f == 0.0f) scaleY_f = 1.0f;
 
-    input.mouse.scaleX_f = scaleX_f;
-    input.mouse.scaleY_f = scaleY_f;
+    input.mouse.scaleX_f = 1.0 / (double)(scaleX_f);
+    input.mouse.scaleY_f = 1.0 / (double)(scaleY_f);
 }
 
 void mouseButtonUpHandler(uint8_t mouseButton)
