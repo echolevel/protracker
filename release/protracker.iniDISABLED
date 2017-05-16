@@ -13,15 +13,14 @@
 
 [VIDEO SETTINGS]
 ; Video scaling factor
-;        Syntax: 1X, 2X, 3X or 4x
+;        Syntax: 1X, 2X or 3X
 ; Default value: 2X
 ;       Comment: Sets the video scaling factor (window rendering size).
 ;         1X = 320x255 (no scaling)
 ;         2X = 640x510 (default)
 ;         3x = 960x765
-;         4x = 1280x1020
 ;
-VIDEOSCALE=2X
+VIDEOSCALE=3X
 
 [GENERAL SETTINGS]
 ; Blank sample number (first digit) aka. "BLANKZERO" setting in PT
@@ -38,7 +37,7 @@ BLANKZERO=FALSE
 ;       Comment: Setting it to TRUE will render real VU-Meters which
 ;         are updated from the audio mixer.
 ;
-REALVUMETERS=FALSE
+REALVUMETERS=TRUE
 
 ; Show dots instead of zeroes
 ;        Syntax: TRUE or FALSE
@@ -83,7 +82,7 @@ TRANSDEL=FALSE
 ; Default value:
 ;    Max length: Varies... 260 characters on Windows, more on other OSes.
 ;       Comment: Leave blank (or remove setting) to use
-;         the binary/exe directory. Don't use quotes!
+;         the binary/exe directory.
 ;
 DEFAULTDIR=
 

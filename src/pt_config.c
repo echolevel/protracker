@@ -75,14 +75,14 @@ int8_t loadConfig(void)
     // check in program directory
     configFile = fopen("protracker.ini", "r");
     if (configFile != NULL)
-        iniConfigFound = true;
+        iniConfigFound = true;    
 
     // check in ~/.protracker/
     if (!iniConfigFound && changePathToHome() && (chdir(".protracker") == 0))
     {
         configFile = fopen("protracker.ini", "r");
         if (configFile != NULL)
-            iniConfigFound = true;
+            iniConfigFound = true;            
     }
 #endif
 
@@ -266,16 +266,18 @@ int8_t loadConfig(void)
 
 #ifdef _WIN32
     configFile = loadPTDotConfig();
+    
     if (configFile != NULL)
         ptConfigFound = true;
+        
 #else
     // check in program directory
     configFile = loadPTDotConfig();
+    
     if (configFile != NULL)
-        iniConfigFound = true;
-
+        ptConfigFound = true;
     // check in ~/.protracker/
-    if (!iniConfigFound && changePathToHome() && (chdir(".protracker") == 0))
+    if (!ptConfigFound && changePathToHome() && (chdir(".protracker") == 0))
     {
         configFile = loadPTDotConfig();
         if (configFile != NULL)

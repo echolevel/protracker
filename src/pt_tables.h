@@ -27,7 +27,7 @@ extern const uint8_t fontBMP[5120];
 extern const uint8_t arrowPaletteBMP[30];
 
 // PACKED GFX
-extern const uint8_t aboutScreenPackedBMP[1684];
+extern const uint8_t aboutScreenPackedBMP[2003];
 extern const uint8_t clearDialogPackedBMP[525];
 extern const uint8_t diskOpScreenPackedBMP[1898];
 extern const uint8_t editOpModeCharsPackedBMP[88];
