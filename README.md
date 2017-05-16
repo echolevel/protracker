@@ -28,7 +28,7 @@ TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 I was having trouble getting this build of PT to load my Amiga PT.Config files, which it's supposed to, but there was a small
 bug that I've fixed here, and passed back to 8bitbubsy so he can update the SVN. Now that they do work, you can follow the latest
 'correct' practice by putting your protracker.ini and your PT.Config files (they can be numbered -XX as on the Amiga, or you can miss the hyphen and number off and they'll
-still be read) into ~/.protracker/ (which you may have to create). If there's no PT.Config there, PT looks for PT.Config files in the defaultdir
+still be read) into \~/.protracker/ (which you may have to create). If there's no PT.Config there, PT looks for PT.Config files in the defaultdir
 that's set in protracker.ini - bear in mind, though, that this doesn't seem to parse '~/'. Make sure you use the full path. Setting this is a good idea
 either way, as it's Disk Op's starting directory on load and saves navigating painstakingly to your samples/modules folder each time.
 
