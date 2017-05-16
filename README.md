@@ -64,12 +64,13 @@ You'll end up with myLegitFireGrafx.bmp.c, which you should move to the src/gfx 
 * copy the buffer array size from the NEW bmp.c (e.g. _1872_)
 * open src/pt\_tables.h and find the relevant extern line (e.g. _extern const uint8\_t aboutScreenPackedBMP[2003];_)
 * update the array length there
+* save the c and the h file, maybe delete the OLD c file too for good measure
 
 Now you should be able to build Protracker as per 8bitbubsy's detailed instructions in _compiling.txt_ and see your fancy new graphics!
 
-Caveat: greating the BMP in the first place can be a big hassle, and bmp2pth will tell you when you've got it wrong. If you're
+Caveat: creating the BMP in the first place can be a big hassle, and bmp2pth will tell you when you've got it wrong. If you're
 using Photoshop, it needs to be a Truecolour (ie 16, 24 or 32 bit) bitmap, but you should be working in RGB mode and 8bits/channel. Make sure 
-there are no rogue pixels with colours that aren't those listed above. When saving, go for 'Windows' and '32 bit' in the export options. Then
+there are no rogue pixels with colours that aren't those listed above. When doing Save As, go for 'Windows' and '32 bit' in the export options. Then
 hopefully it'll work... If it sort of works but looks messed up when you run PT, you've probably forgotten to update the buffer array size
 in pt\_tables.h. If you forget something else, like the const name, PT won't build anyway (and should throw an error that gives you a hint).
 
